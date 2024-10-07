@@ -1,0 +1,24 @@
+.NavbarBody {
+  width: 100%;
+  position: fixed;
+  z-index: 50;
+}
+
+.DesktopNavContainer {
+  width: 100%;
+  height: 85px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(13.75px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dNavLogo {
+  width: 90px;
+  height: 90px;
+  background-image: url("../../app/assets/navLogo.png");
+  background-size: contain;
+  margin-top: 50px;
+  margin-left: 30px;
+}

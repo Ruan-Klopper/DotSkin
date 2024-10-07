@@ -1,0 +1,13 @@
+body {
+  background-color: white;
+  color: black;
+}
+
+.clientWebsiteContainer {
+}
+
+.clientWebsiteContent {
+  width: 100%;
+  height: auto;
+  padding-top: 95px;
+}
