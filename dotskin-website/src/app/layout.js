@@ -1,15 +1,30 @@
 import localFont from "next/font/local";
+import { Abhaya_Libre, Inter } from "next/font/google";
 import "./globals.css";
 
+// Import local fonts
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+// Import Google Fonts
+const abhayaLibre = Abhaya_Libre({
+  subsets: ["latin"],
+  weight: "800", // ExtraBold
+  variable: "--font-abhaya-libre",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata = {
@@ -21,7 +36,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${abhayaLibre.variable} ${inter.variable} antialiased`}
       >
         {children}
       </body>
