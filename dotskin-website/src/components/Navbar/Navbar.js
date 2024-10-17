@@ -1,7 +1,9 @@
 // Navbar component: Client rendered
+// app/components/Navbar/Navbar.js
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import Notification from "../Notification/Notification";
 import "./Navbar.css";
 import "./hamburgerMenu.css";
@@ -38,34 +40,71 @@ const DesktopNav = () => {
               </div>
             </button>
 
-            <div className="navUserProfile ml-5 mr-5">
-              <div className="navUserProfileLeft mr-3"></div>
-              <div className="navUserProfileRight">
-                <h6>Hi Ruan</h6>
-                <h6>Your account</h6>
+            <Link
+              href="/account"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <div className="navUserProfile ml-5 mr-5">
+                <div className="navUserProfileLeft mr-3"></div>
+                <div className="navUserProfileRight">
+                  <h6>Hi Ruan</h6>
+                  <h6>Your account</h6>
+                </div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
         <div className="dNavLinks">
           <ul className="flex justify-center items-center">
-            <li className="navitem">home</li>
+            <li className="navitem">
+              <Link href="/" style={{ textDecoration: "none", color: "black" }}>
+                home
+              </Link>
+            </li>
             <li>
               <div className="navDot"></div>
             </li>
-            <li className="navitem">shop</li>
+            <li className="navitem">
+              <Link
+                href="/products"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                shop
+              </Link>
+            </li>
             <li>
               <div className="navDot"></div>
             </li>
-            <li className="navitem">about</li>
+            <li className="navitem">
+              <Link
+                href="/about"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                about
+              </Link>
+            </li>
             <li>
               <div className="navDot"></div>
             </li>
-            <li className="navitem">.skin analysis</li>
+            <li className="navitem">
+              <Link
+                href="/skin-analysis"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                .skin analysis
+              </Link>
+            </li>
             <li>
               <div className="navDot"></div>
             </li>
-            <li className="navitem">testimonials</li>
+            <li className="navitem">
+              <Link
+                href="/testimonials"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                testimonials
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
@@ -139,11 +178,51 @@ const MobileNav = () => {
       <div className={`mHamburgerMenu ${isHamburgerOpen ? "active" : ""}`}>
         <div className="mNavs">
           <ul className="mobileNavs">
-            <li className="navitem mNavItem">home</li>
-            <li className="navitem mNavItem">shop</li>
-            <li className="navitem mNavItem">about</li>
-            <li className="navitem mNavItem">.skin analysis</li>
-            <li className="navitem mNavItem">testimonials</li>
+            <li className="navitem mNavItem">
+              <Link
+                href="/"
+                onClick={() => setIsHamburgerOpen(false)}
+                style={{ textDecoration: "underline", color: "black" }}
+              >
+                home
+              </Link>
+            </li>
+            <li className="navitem mNavItem">
+              <Link
+                href="/products"
+                onClick={() => setIsHamburgerOpen(false)}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                shop
+              </Link>
+            </li>
+            <li className="navitem mNavItem">
+              <Link
+                href="/about"
+                onClick={() => setIsHamburgerOpen(false)}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                about
+              </Link>
+            </li>
+            <li className="navitem mNavItem">
+              <Link
+                href="/skin-analysis"
+                onClick={() => setIsHamburgerOpen(false)}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                .skin analysis
+              </Link>
+            </li>
+            <li className="navitem mNavItem">
+              <Link
+                href="/testimonials"
+                onClick={() => setIsHamburgerOpen(false)}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                testimonials
+              </Link>
+            </li>
           </ul>
         </div>
 
