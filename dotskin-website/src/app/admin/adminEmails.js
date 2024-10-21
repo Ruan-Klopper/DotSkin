@@ -1,3 +1,4 @@
+// AdminEmails.js
 "use client";
 import React, { useState } from "react";
 import {
@@ -11,6 +12,7 @@ import {
 } from "react-bootstrap";
 import "../global.css";
 import "./adminscreens.css";
+import Image from "next/image"; // Added import for Next.js Image component
 
 // Simulated products for the email builders
 const productsDB = [
@@ -175,6 +177,8 @@ export default function AdminEmailManager() {
             <Image
               src={content.image}
               alt={content.name}
+              width={500}
+              height={200}
               style={{
                 width: "100%",
                 height: "auto",
@@ -260,6 +264,7 @@ export default function AdminEmailManager() {
               <Form.Label>Upload Image</Form.Label>
               <Form.Control
                 type="file"
+                accept="image/*"
                 onChange={(e) =>
                   handleUpdateSection(
                     index,
@@ -273,9 +278,11 @@ export default function AdminEmailManager() {
               />
               {section.content.image && (
                 <>
-                  <img
+                  <Image
                     src={section.content.image}
                     alt="Uploaded"
+                    width={500}
+                    height={300}
                     style={{
                       width: "100%",
                       height: "auto",
