@@ -172,7 +172,7 @@ export default function AdminEmailManager() {
       {content.name && (
         <Card className="mb-3">
           <Card.Body>
-            <img
+            <Image
               src={content.image}
               alt={content.name}
               style={{

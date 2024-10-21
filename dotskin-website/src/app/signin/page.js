@@ -37,7 +37,7 @@ export default function SignIn() {
             <div className="signInFormContainerWrapper">
               <div className="signInTopGroup">
                 <h3>Welcome!</h3>
-                <h5>Let's sign you in</h5>
+                <h5>Let&apos;s sign you in</h5>
               </div>
               <Form onSubmit={handleSubmit}>
                 <Row>

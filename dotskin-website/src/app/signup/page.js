@@ -41,7 +41,7 @@ export default function SignUp() {
             <div className="signInFormContainerWrapper">
               <div className="signInTopGroup">
                 <h3>Welcome!</h3>
-                <h5>Let's create your account to get started</h5>
+                <h5>Let&apos;s create your account to get started</h5>
               </div>
               <Form onSubmit={handleSubmit}>
                 <Row>

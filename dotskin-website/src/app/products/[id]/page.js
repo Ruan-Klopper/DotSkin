@@ -1,4 +1,4 @@
-// Poducts Catalog
+// Products single view
 "use client";
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -26,6 +26,7 @@ export default function ProductSingleView() {
   const toggleSideNav = () => {
     setIsSideNavActive(!isSideNavActive);
   };
+
   return (
     <div className="clientWebsiteContainer">
       <Navbar />
@@ -69,6 +70,7 @@ export default function ProductSingleView() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
+
                 <Accordion defaultActiveKey="0">
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>Ingredients</Accordion.Header>
@@ -83,9 +85,10 @@ export default function ProductSingleView() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
+
                 <Accordion defaultActiveKey="0">
                   <Accordion.Item eventKey="0">
-                    <Accordion.Header>Precautioms</Accordion.Header>
+                    <Accordion.Header>Precautions</Accordion.Header>
                     <Accordion.Body>
                       Keep out of reach of children and store in a cool, dry
                       place out of direct sunlight. If irritation occurs, reduce
@@ -94,6 +97,7 @@ export default function ProductSingleView() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
+
                 <div className="PSVsplitter"></div>
                 <h2>Reviews</h2>
                 <div className="PSVcustomerRatingsContainer">
@@ -103,7 +107,7 @@ export default function ProductSingleView() {
                       <Card.Title>Username 29 Nov 2005</Card.Title>
                       <Card.Text>
                         Some quick example text to build on the card title and
-                        make up the bulk of the card's content.
+                        make up the bulk of the card&apos;s content.
                       </Card.Text>
                     </Card.Body>
                   </Card>

@@ -2,6 +2,10 @@
   "name": "dotskin-website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,11 +20,13 @@
     "express-webhook": "^0.0.2",
     "jquery": "^3.7.1",
     "next": "14.2.14",
+    "postcss": "^8.4.25",
     "react": "^18",
     "react-bootstrap": "^2.10.5",
     "react-dom": "^18",
     "sass": "^1.79.4",
-    "swiper": "^11.1.14"
+    "swiper": "^11.1.14",
+    "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
@@ -29,8 +35,6 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.1",
     "nodemon": "^3.1.7",
-    "postcss": "^8",
-    "prettier": "^3.3.3",
-    "tailwindcss": "^3.4.1"
+    "prettier": "^3.3.3"
   }
 }

@@ -1,4 +1,4 @@
-// Poducts Catalog
+// Products Catalog
 "use client";
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -218,6 +218,7 @@ export default function ProductsCatalog() {
       image: "/sampleImages/image-3.png",
     },
   ];
+
   return (
     <div className="clientWebsiteContainer">
       <Navbar />
@@ -225,12 +226,18 @@ export default function ProductsCatalog() {
         <div className="PCLmainContainer">
           {/* SideNav */}
           {/* <div
-            className={`PLCsideBar ${isSideNavActive ? "PLCsideBarClosed" : ""}`}
+            className={`PLCsideBar ${
+              isSideNavActive ? "PLCsideBarClosed" : ""
+            }`}
           >
             <PCPSideNav />
             <button className="PCAsideNavCloseBtn" onClick={toggleSideNav}>
               <div
-                className={`PCAsideNavCloseBtnIcon ${isSideNavActive ? "PCAsideNavCloseBtnIconOpen" : "PCAsideNavCloseBtnIconClose"}`}
+                className={`PCAsideNavCloseBtnIcon ${
+                  isSideNavActive
+                    ? "PCAsideNavCloseBtnIconOpen"
+                    : "PCAsideNavCloseBtnIconClose"
+                }`}
               ></div>
               {isSideNavActive ? "Search & Filtering" : "close"}
             </button>
@@ -244,6 +251,7 @@ export default function ProductsCatalog() {
               <Row>
                 {products.map((product, index) => (
                   <ProductCardWrapper
+                    key={index} // Added key prop here
                     cardType={"desktop"}
                     title={product.title}
                     price={product.price}
