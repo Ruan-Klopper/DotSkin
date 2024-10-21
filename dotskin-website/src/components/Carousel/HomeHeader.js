@@ -49,7 +49,7 @@ const DesktopHomeHeader = () => {
           <div className="dHHproductCarousel">
             <Swiper
               modules={[Navigation, Pagination, A11y, Autoplay]}
-              spaceBetween={10}
+              spaceBetween={0}
               slidesPerView={2}
               autoplay={{
                 delay: 5000,

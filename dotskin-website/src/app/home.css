@@ -1,6 +1,19 @@
 /* Home.css */
 
 /* Home Product Card */
+
+@media screen and (min-width: 1151px) {
+  .homepage {
+    padding-top: 120px;
+  }
+}
+
+@media screen and (min-width: 0px) and (max-width: 1150px) {
+  .homepage {
+    padding-top: 110px;
+  }
+}
+
 .hcCardBody {
   width: 290px;
   height: 350px;
