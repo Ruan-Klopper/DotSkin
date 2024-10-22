@@ -172,3 +172,12 @@
 .forgot-password-link:hover {
   text-decoration: underline;
 }
+
+.CMSHeaderControls {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.CMSHeaderControlContainer {
+  margin: 10px;
+}

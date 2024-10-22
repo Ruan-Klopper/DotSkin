@@ -40,7 +40,6 @@ const DesktopCard = ({ title, price, rating, image }) => {
       style={{ textDecoration: "none", color: "black" }}
     >
       <div className="dpcBody">
-        <div className="dpcBGtext">{title}</div>
         <div className="dpcConent">
           <div
             className="dpcImage"

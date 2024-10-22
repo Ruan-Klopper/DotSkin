@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  customer
+  contentManager
+  admin
+}
+
+model User {
+  user_id             String      @id @default(uuid())
+  first_name          String
+  last_name           String
+  email               String      @unique
+  password            String
+  phone_number        String?
+  is_verified         Boolean     @default(false)
+  verification_token  String?
+  email_verified_at   DateTime?
+  date_of_birth       DateTime?
+  role                Role        @default(customer)
+  created_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
+
+  // Relations
+  reviews             Review[]
+}
+
+model Product {
+  product_id      String      @id @default(uuid())
+  name            String
+  sku             String      @unique
+  description     String?
+  SEOtags         String?
+  directions      String?
+  ingredients     String?
+  precautions     String?
+  price           Decimal     @default(0.00)
+  tax_rate        Decimal     @default(0.00)
+  stock_quantity  Int         @default(0)
+  is_active       Boolean     @default(true)
+  image_url       String?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  categories      Category[]   @relation("ProductCategories")
+  reviews         Review[]
+}
+
+model Review {
+  review_id             String      @id @default(uuid())
+  rating                Int
+  comment               String?
+  review_title          String?
+  is_verified_purchase  Boolean     @default(false)
+  created_at            DateTime    @default(now())
+
+  // Relations
+  user        User    @relation(fields: [user_id], references: [user_id])
+  user_id     String
+  product     Product @relation(fields: [product_id], references: [product_id])
+  product_id  String
+}
+
+model Category {
+  category_id         String      @id @default(uuid())
+  name                String
+  description         String?
+  parent_category_id  String?
+  created_at          DateTime    @default(now())
+
+  // Self-relation for hierarchical categories
+  parent_category     Category?   @relation("CategoryToCategory", fields: [parent_category_id], references: [category_id])
+  subcategories       Category[]  @relation("CategoryToCategory")
+
+  // Added many-to-many relation with products
+  products            Product[]   @relation("ProductCategories")
+}

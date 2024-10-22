@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -12,96 +12,266 @@ import {
 import "../global.css";
 import "./adminscreens.css";
 
+// Very Important, when a product is being created and a cateogry havent been selected (which is on a another table which is linked to category_id in the products table) it should be deafult to "none", there should be a dropdown that will make a call from the category table to show all the options for the categories, inwhich the id of the category will be added to that
+
 export default function AdminProductCatalog() {
-  // Sample product data for DotSkin (you can replace this with real product data)
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      sku: "DSK001",
-      name: "Hydrating Face Cream",
-      price: "R299.99",
-      active: true,
-      description: "A deeply hydrating face cream.",
-      directions: "Apply to clean skin daily.",
-      ingredients: "Water, Glycerin, etc.",
-      precautions: "Avoid contact with eyes.",
-      seo: "Hydrating Face Cream",
-      categories: ["Face", "Moisturizer"],
-      image: "/sampleImages/image.png",
-    },
-    {
-      id: 2,
-      sku: "DSK002",
-      name: "Vitamin C Serum",
-      price: "R399.99",
-      active: true,
-      description: "A revitalizing Vitamin C serum.",
-      directions: "Apply 2-3 drops to clean skin.",
-      ingredients: "Vitamin C, Hyaluronic Acid, etc.",
-      precautions: "Patch test before use.",
-      seo: "Vitamin C Serum",
-      categories: ["Face", "Serum"],
-      image: "/sampleImages/image.png",
-    },
-    // Add more products here...
-  ]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  // State to control the edit modal visibility and selected product
-  const [showModal, setShowModal] = useState(false);
+  // State for selected product in edit modal
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  // State to control the create product modal visibility
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  // State for creating a new product
   const [newProduct, setNewProduct] = useState({
     sku: "",
     name: "",
-    price: "",
-    active: true,
     description: "",
+    SEOtags: "",
     directions: "",
     ingredients: "",
     precautions: "",
-    seo: "",
-    categories: "",
-    image: "",
+    price: "",
+    tax_rate: "",
+    stock_quantity: "",
+    is_active: true,
+    image_url: "",
+    category_ids: [], // Changed from category_id to category_ids
   });
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Function to open the modal and set the selected product
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+
+  // Backend JS
+  // Fetch products and categories from API on component mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error(`Error fetching products: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (!response.ok) {
+          throw new Error(`Error fetching categories: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProducts();
+    fetchCategories();
+  }, []);
+
+  // Handle creating a new product
+  const handleCreateProduct = async () => {
+    try {
+      const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...newProduct,
+          price: parseFloat(newProduct.price),
+          tax_rate: parseFloat(newProduct.tax_rate),
+          stock_quantity: parseInt(newProduct.stock_quantity),
+          is_active: newProduct.is_active,
+          category_ids: newProduct.category_ids,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Error creating product: ${response.statusText}`);
+      }
+      const createdProduct = await response.json();
+      setProducts([...products, createdProduct]);
+      setShowCreateModal(false);
+      // Reset newProduct state
+      setNewProduct({
+        sku: "",
+        name: "",
+        description: "",
+        SEOtags: "",
+        directions: "",
+        ingredients: "",
+        precautions: "",
+        price: "",
+        tax_rate: "",
+        stock_quantity: "",
+        is_active: true,
+        image_url: "",
+        category_ids: [],
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle updating a product
+  const handleUpdateProduct = async () => {
+    try {
+      const response = await fetch(
+        `/api/products/${selectedProduct.product_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...selectedProduct,
+            price: parseFloat(selectedProduct.price),
+            tax_rate: parseFloat(selectedProduct.tax_rate),
+            stock_quantity: parseInt(selectedProduct.stock_quantity),
+            category_ids: selectedProduct.category_ids,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Error updating product: ${response.statusText}`);
+      }
+      const updatedProduct = await response.json();
+      setProducts(
+        products.map((p) =>
+          p.product_id === updatedProduct.product_id ? updatedProduct : p
+        )
+      );
+      setShowModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle deleting a product
+  const handleDeleteProduct = async () => {
+    try {
+      const response = await fetch(
+        `/api/products/${selectedProduct.product_id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Error deleting product: ${response.statusText}`);
+      }
+      setProducts(
+        products.filter((p) => p.product_id !== selectedProduct.product_id)
+      );
+      setShowModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle toggling product active status
+  const handleToggleActiveProduct = async (product) => {
+    try {
+      const updatedProduct = { ...product, is_active: !product.is_active };
+      const response = await fetch(`/api/products/${product.product_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_active: updatedProduct.is_active }),
+      });
+      if (!response.ok) {
+        throw new Error(`Error updating product: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setProducts(
+        products.map((p) => (p.product_id === data.product_id ? data : p))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle creating a new category
+  const handleCreateCategory = async () => {
+    try {
+      const response = await fetch("/api/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCategory),
+      });
+      if (!response.ok) {
+        throw new Error(`Error creating category: ${response.statusText}`);
+      }
+      const createdCategory = await response.json();
+      setCategories([...categories, createdCategory]);
+      setNewCategory({ name: "", description: "" }); // Reset form fields
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle deleting a category
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      const response = await fetch(`/api/categories/${categoryId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Error deleting category: ${response.statusText}`);
+      }
+      setCategories(
+        categories.filter((category) => category.id !== categoryId)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Frontend JS
+  // Open edit modal
   const handleOpenModal = (product) => {
-    setSelectedProduct(product);
+    // Create a copy to avoid direct state mutation
+    setSelectedProduct({
+      ...product,
+      category_ids: product.categories
+        ? product.categories.map((cat) => cat.category_id)
+        : [],
+    });
     setShowModal(true);
   };
 
-  // Function to close the modal
+  // Close edit modal
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedProduct(null);
   };
 
-  // Function to open the create product modal
+  // Open category modal
+  const handleOpenCategoryModal = () => {
+    setShowCategoryModal(true);
+  };
+
+  // Close category modal
+  const handleCloseCategoryModal = () => {
+    setShowCategoryModal(false);
+  };
+
+  // Open create product modal
   const handleOpenCreateModal = () => {
     setShowCreateModal(true);
   };
 
-  // Function to close the create product modal
+  // Close create product modal
   const handleCloseCreateModal = () => {
-    setShowCreateModal(false);
-  };
-
-  // Function to handle product deletion (placeholder)
-  const handleDeleteProduct = () => {
-    alert(`Product "${selectedProduct.name}" has been deleted.`);
-    setShowModal(false);
-  };
-
-  // Function to handle creating a new product
-  const handleCreateProduct = () => {
-    const newProductData = {
-      ...newProduct,
-      id: products.length + 1,
-      categories: newProduct.categories.split(","),
-    };
-    setProducts([...products, newProductData]);
     setShowCreateModal(false);
   };
 
@@ -109,8 +279,8 @@ export default function AdminProductCatalog() {
     <div>
       <Container className="my-4">
         <h1>Manage products</h1>
-        <Row className="mt-4">
-          <Col xs={12} sm={12} md={4} lg={3}>
+        <div className="CMSHeaderControls">
+          <div className="CMSHeaderControlContainer w-[450px]">
             <h5>Search</h5>
             <div className="CMSHeaderControlGroup">
               {/* Search bar for searching a product */}
@@ -130,9 +300,8 @@ export default function AdminProductCatalog() {
                 </Button>
               </Form>
             </div>
-          </Col>
-
-          <Col xs={12} sm={12} md={4} lg={3}>
+          </div>
+          <div className="CMSHeaderControlContainer w-[265px]">
             {/* Button to create a new product */}
             <h5>Add an product</h5>
             <div className="CMSHeaderControlGroup">
@@ -144,9 +313,23 @@ export default function AdminProductCatalog() {
                 Create Product
               </Button>
             </div>
-          </Col>
-          <div className="ASNspliiter mt-3 mb-5"></div>
-        </Row>
+          </div>
+
+          <div className="CMSHeaderControlContainer w-[350px]">
+            {/* Button to manage categories */}
+            <h5>Categories</h5>
+            <div className="CMSHeaderControlGroup">
+              <Button
+                variant="primary"
+                onClick={handleOpenCategoryModal}
+                className=""
+              >
+                Manage Categories
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="ASNspliiter mt-3 mb-5"></div>
 
         {/* Product Cards */}
         <Row>
@@ -157,12 +340,12 @@ export default function AdminProductCatalog() {
               md={6}
               lg={3}
               className="mb-4"
-              key={product.id}
+              key={product.product_id}
             >
               <Card>
                 <Card.Img
                   variant="top"
-                  src={product.image}
+                  src={product.image_url || "/default-image.png"}
                   alt={product.name}
                   style={{ height: "200px", objectFit: "contain" }}
                 />
@@ -172,11 +355,17 @@ export default function AdminProductCatalog() {
                     <strong>SKU: </strong> {product.sku}
                   </Card.Text>
                   <Card.Text className="mb-0">
-                    <strong>Price: </strong> {product.price}
+                    <strong>Price: </strong> R{product.price}
+                  </Card.Text>
+                  <Card.Text className="mb-0">
+                    <strong>Categories: </strong>
+                    {product.categories && product.categories.length > 0
+                      ? product.categories.map((cat) => cat.name).join(", ")
+                      : "None"}
                   </Card.Text>
                   <Card.Text className="mb-3">
                     <strong>Status: </strong>
-                    {product.active ? "Active" : "Inactive"}
+                    {product.is_active ? "Active" : "Inactive"}
                   </Card.Text>
                   {/* Button to open the modal */}
                   <Button
@@ -186,8 +375,13 @@ export default function AdminProductCatalog() {
                   >
                     View/Edit
                   </Button>
-                  <Button variant="danger" className="d-block w-100" size="sm">
-                    {product.active ? "Deactivate" : "Activate"}
+                  <Button
+                    variant="danger"
+                    className="d-block w-100"
+                    size="sm"
+                    onClick={() => handleToggleActiveProduct(product)}
+                  >
+                    {product.is_active ? "Deactivate" : "Activate"}
                   </Button>
                 </Card.Body>
               </Card>
@@ -208,10 +402,20 @@ export default function AdminProductCatalog() {
                 {/* Left column for image */}
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Form.Group controlId="productImage" className="mb-3">
-                    <Form.Label>Product Image</Form.Label>
-                    <div className="mb-3">
+                    <Form.Label>Product Image URL</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={selectedProduct.image_url}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          image_url: e.target.value,
+                        })
+                      }
+                    />
+                    <div className="mt-3">
                       <img
-                        src={selectedProduct.image}
+                        src={selectedProduct.image_url || "/default-image.png"}
                         alt={selectedProduct.name}
                         style={{
                           width: "100%",
@@ -221,17 +425,50 @@ export default function AdminProductCatalog() {
                         }}
                       />
                     </div>
-                    <Form.Control type="file" />
+                  </Form.Group>
+                  {/* Checkbox for is_active */}
+                  <Form.Group controlId="productIsActive" className="mb-3">
+                    <Form.Check
+                      type="checkbox"
+                      label="Active"
+                      checked={selectedProduct.is_active}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          is_active: e.target.checked,
+                        })
+                      }
+                    />
                   </Form.Group>
                 </Col>
 
                 {/* Right column for text fields */}
                 <Col xs={12} sm={12} md={6} lg={6}>
+                  <Form.Group controlId="productSKU" className="mb-3">
+                    <Form.Label>SKU</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={selectedProduct.sku}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          sku: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+
                   <Form.Group controlId="productName" className="mb-3">
                     <Form.Label>Product Name</Form.Label>
                     <Form.Control
                       type="text"
-                      defaultValue={selectedProduct.name}
+                      value={selectedProduct.name}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          name: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
@@ -240,7 +477,27 @@ export default function AdminProductCatalog() {
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      defaultValue={selectedProduct.description}
+                      value={selectedProduct.description}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="productSEOtags" className="mb-3">
+                    <Form.Label>SEO Tags</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={selectedProduct.SEOtags}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          SEOtags: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
@@ -249,7 +506,13 @@ export default function AdminProductCatalog() {
                     <Form.Control
                       as="textarea"
                       rows={2}
-                      defaultValue={selectedProduct.directions}
+                      value={selectedProduct.directions}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          directions: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
@@ -258,7 +521,13 @@ export default function AdminProductCatalog() {
                     <Form.Control
                       as="textarea"
                       rows={2}
-                      defaultValue={selectedProduct.ingredients}
+                      value={selectedProduct.ingredients}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          ingredients: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
@@ -267,50 +536,110 @@ export default function AdminProductCatalog() {
                     <Form.Control
                       as="textarea"
                       rows={2}
-                      defaultValue={selectedProduct.precautions}
+                      value={selectedProduct.precautions}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          precautions: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
                   <Form.Group controlId="productPrice" className="mb-3">
                     <Form.Label>Price</Form.Label>
                     <Form.Control
-                      type="text"
-                      defaultValue={selectedProduct.price}
+                      type="number"
+                      step="0.01"
+                      value={selectedProduct.price}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          price: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
-                  <Form.Group controlId="productSEO" className="mb-3">
-                    <Form.Label>SEO</Form.Label>
+                  <Form.Group controlId="productTaxRate" className="mb-3">
+                    <Form.Label>Tax Rate</Form.Label>
                     <Form.Control
-                      type="text"
-                      defaultValue={selectedProduct.seo}
+                      type="number"
+                      step="0.01"
+                      value={selectedProduct.tax_rate}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          tax_rate: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="productStockQuantity" className="mb-3">
+                    <Form.Label>Stock Quantity</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={selectedProduct.stock_quantity}
+                      onChange={(e) =>
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          stock_quantity: e.target.value,
+                        })
+                      }
                     />
                   </Form.Group>
 
                   <Form.Group controlId="productCategories" className="mb-3">
                     <Form.Label>Categories</Form.Label>
                     <Form.Control
-                      type="text"
-                      defaultValue={selectedProduct.categories.join(", ")}
-                    />
+                      as="select"
+                      multiple
+                      value={selectedProduct.category_ids}
+                      onChange={(e) => {
+                        const options = e.target.options;
+                        const selectedCategories = [];
+                        for (let i = 0; i < options.length; i++) {
+                          if (options[i].selected) {
+                            selectedCategories.push(options[i].value);
+                          }
+                        }
+                        setSelectedProduct({
+                          ...selectedProduct,
+                          category_ids: selectedCategories,
+                        });
+                      }}
+                    >
+                      {categories.map((category) => (
+                        <option
+                          key={category.category_id}
+                          value={category.category_id}
+                        >
+                          {category.name}
+                        </option>
+                      ))}
+                    </Form.Control>
                   </Form.Group>
+
+                  {/* Save Changes Button */}
+                  <Button
+                    variant="primary"
+                    className="mt-3 me-2"
+                    onClick={handleUpdateProduct}
+                  >
+                    Save Changes
+                  </Button>
+                  {/* Delete Product Button */}
+                  <Button
+                    variant="danger"
+                    className="mt-3"
+                    onClick={handleDeleteProduct}
+                  >
+                    Delete Product
+                  </Button>
                 </Col>
               </Row>
             </Form>
-
-            {/* View reviews button */}
-            <Button variant="info" className="mt-3 me-2">
-              View Reviews
-            </Button>
-
-            {/* Delete product button */}
-            <Button
-              variant="danger"
-              className="mt-3"
-              onClick={handleDeleteProduct}
-            >
-              Delete Product
-            </Button>
           </Modal.Body>
         </Modal>
       )}
@@ -323,22 +652,52 @@ export default function AdminProductCatalog() {
         <Modal.Body>
           <Form>
             <Row>
-              {/* Right column for image */}
+              {/* Left column for image */}
               <Col xs={12} sm={12} md={6} lg={6}>
-                <Form.Group controlId="newProductImage" className="mb-3">
-                  <Form.Label>Product Image</Form.Label>
+                <Form.Group controlId="newProductImageUrl" className="mb-3">
+                  <Form.Label>Product Image URL</Form.Label>
                   <Form.Control
-                    type="file"
+                    type="text"
+                    value={newProduct.image_url}
                     onChange={(e) =>
                       setNewProduct({
                         ...newProduct,
-                        image: URL.createObjectURL(e.target.files[0]),
+                        image_url: e.target.value,
+                      })
+                    }
+                  />
+                  {newProduct.image_url && (
+                    <div className="mt-3">
+                      <img
+                        src={newProduct.image_url}
+                        alt={newProduct.name}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          maxHeight: "300px",
+                          objectFit: "contain",
+                        }}
+                      />
+                    </div>
+                  )}
+                </Form.Group>
+                {/* Checkbox for is_active */}
+                <Form.Group controlId="newProductIsActive" className="mb-3">
+                  <Form.Check
+                    type="checkbox"
+                    label="Active"
+                    checked={newProduct.is_active}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        is_active: e.target.checked,
                       })
                     }
                   />
                 </Form.Group>
               </Col>
-              {/* Left column for text fields */}
+
+              {/* Right column for text fields */}
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Form.Group controlId="newProductSKU" className="mb-3">
                   <Form.Label>SKU</Form.Label>
@@ -373,6 +732,17 @@ export default function AdminProductCatalog() {
                         ...newProduct,
                         description: e.target.value,
                       })
+                    }
+                  />
+                </Form.Group>
+
+                <Form.Group controlId="newProductSEOtags" className="mb-3">
+                  <Form.Label>SEO Tags</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={newProduct.SEOtags}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, SEOtags: e.target.value })
                     }
                   />
                 </Form.Group>
@@ -425,7 +795,8 @@ export default function AdminProductCatalog() {
                 <Form.Group controlId="newProductPrice" className="mb-3">
                   <Form.Label>Price</Form.Label>
                   <Form.Control
-                    type="text"
+                    type="number"
+                    step="0.01"
                     value={newProduct.price}
                     onChange={(e) =>
                       setNewProduct({ ...newProduct, price: e.target.value })
@@ -433,29 +804,135 @@ export default function AdminProductCatalog() {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="newProductCategories" className="mb-3">
-                  <Form.Label>Categories (comma-separated)</Form.Label>
+                <Form.Group controlId="newProductTaxRate" className="mb-3">
+                  <Form.Label>Tax Rate</Form.Label>
                   <Form.Control
-                    type="text"
-                    value={newProduct.categories}
+                    type="number"
+                    step="0.01"
+                    value={newProduct.tax_rate}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, tax_rate: e.target.value })
+                    }
+                  />
+                </Form.Group>
+
+                <Form.Group
+                  controlId="newProductStockQuantity"
+                  className="mb-3"
+                >
+                  <Form.Label>Stock Quantity</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={newProduct.stock_quantity}
                     onChange={(e) =>
                       setNewProduct({
                         ...newProduct,
-                        categories: e.target.value,
+                        stock_quantity: e.target.value,
                       })
                     }
                   />
                 </Form.Group>
+
+                <Form.Group controlId="newProductCategories" className="mb-3">
+                  <Form.Label>Categories</Form.Label>
+                  <Form.Control
+                    as="select"
+                    multiple
+                    value={newProduct.category_ids}
+                    onChange={(e) => {
+                      const options = e.target.options;
+                      const selectedCategories = [];
+                      for (let i = 0; i < options.length; i++) {
+                        if (options[i].selected) {
+                          selectedCategories.push(options[i].value);
+                        }
+                      }
+                      setNewProduct({
+                        ...newProduct,
+                        category_ids: selectedCategories,
+                      });
+                    }}
+                  >
+                    {categories.map((category) => (
+                      <option
+                        key={category.category_id}
+                        value={category.category_id}
+                      >
+                        {category.name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+
+                {/* Create Product Button */}
+                <Button
+                  variant="primary"
+                  className="mt-3"
+                  onClick={handleCreateProduct}
+                >
+                  Create Product
+                </Button>
               </Col>
             </Row>
           </Form>
-          <Button
-            variant="primary"
-            className="mt-3"
-            onClick={handleCreateProduct}
-          >
-            Create Product
-          </Button>
+        </Modal.Body>
+      </Modal>
+
+      {/* Category Management Modal */}
+      <Modal show={showCategoryModal} onHide={handleCloseCategoryModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage Categories</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Create a new category</h5>
+          <Form>
+            <Form.Group className="mb-3" controlId="newCategoryName">
+              <Form.Label>Category Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter category name"
+                value={newCategory.name}
+                onChange={(e) =>
+                  setNewCategory({ ...newCategory, name: e.target.value })
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="newCategoryDescription">
+              <Form.Label>Category Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Enter category description"
+                value={newCategory.description}
+                onChange={(e) =>
+                  setNewCategory({
+                    ...newCategory,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleCreateCategory}>
+              Create Category
+            </Button>
+          </Form>
+
+          <h5 className="mt-4">Existing Categories</h5>
+          <ul>
+            {categories.map((category) => (
+              <li key={category.id}>
+                {category.name} - {category.description}
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="ms-2"
+                  onClick={() => handleDeleteCategory(category.id)}
+                >
+                  Delete
+                </Button>
+              </li>
+            ))}
+          </ul>
         </Modal.Body>
       </Modal>
     </div>

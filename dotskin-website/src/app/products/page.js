@@ -12,21 +12,26 @@ const Navbar = dynamic(() => import("@/components/Navbar/Navbar"), {
   ssr: false,
 });
 
-const ProductCardWrapper = ({ title, rating, price, image, cardType }) => {
+const ProductCardWrapper = ({ product }) => {
   return (
-    <Col xs={12} sm={12} md={6} lg={3}>
-      <div className="mb-8 flex justify-center">
-        <ProductCard
-          title={title}
-          rating={rating}
-          price={price}
-          image={image}
-          cardType={cardType}
-        />
-      </div>
-    </Col>
+    <div className="mb-8 flex justify-center">
+      <ProductCard
+        title={product.name}
+        rating={calculateAverageRating(product.reviews)}
+        price={`R${product.price}`}
+        image={product.image_url || "/default-image.png"}
+        cardType="desktop"
+      />
+    </div>
   );
 };
+
+function calculateAverageRating(reviews) {
+  if (!reviews || reviews.length === 0) return "No reviews";
+  const total = reviews.reduce((acc, review) => acc + review.rating, 0);
+  const average = (total / reviews.length).toFixed(1);
+  return `${average} (${reviews.length})`;
+}
 
 const PCPSideNav = () => {
   return (
@@ -159,7 +164,6 @@ export default function ProductsCatalog() {
         setProducts(data);
       } catch (err) {
         console.error(err);
-        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -179,24 +183,22 @@ export default function ProductsCatalog() {
               <PCPSideNav />
             </div>
             <div className="PCLcontWrap">
-              {loading ? (
-                <div>Loading products...</div>
-              ) : error ? (
-                <div>Error: {error}</div>
-              ) : (
-                <Row>
-                  {products.map((product, index) => (
-                    <ProductCardWrapper
-                      key={index}
-                      cardType={"desktop"}
-                      title={product.name} // Adjusted property name
-                      price={`R${product.price}`} // Formatting price
-                      rating={product.rating}
-                      image={product.image}
-                    />
-                  ))}
-                </Row>
-              )}
+              <Row>
+                {loading ? (
+                  <div>Loading products...</div>
+                ) : error ? (
+                  <div>Error: {error}</div>
+                ) : (
+                  products.map((product, index) => (
+                    <Col xs={12} sm={12} md={6} lg={3} key={index}>
+                      <ProductCardWrapper
+                        key={product.product_id}
+                        product={product}
+                      />
+                    </Col>
+                  ))
+                )}
+              </Row>
             </div>
           </div>
         </div>

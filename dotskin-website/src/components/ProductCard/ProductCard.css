@@ -3,31 +3,9 @@
   height: 370px;
   flex-shrink: 0;
   border-radius: 25px;
-  border: var(--sds-size-stroke-border) solid #b4d498;
+  border: 2px solid #b4d498;
   background: #fff;
   overflow: hidden;
-}
-
-.dpcBGtext {
-  width: 320px;
-  height: 400px;
-  font-family: var(--font-abhaya-libre), sans-serif;
-  font-size: 128px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 95px; /* 74.219% */
-  letter-spacing: 0.46px;
-  text-transform: uppercase;
-  overflow-wrap: break-word;
-  margin-left: -30px;
-  background: linear-gradient(121deg, #e0edd5 0%, #fff 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: -400px;
-  opacity: 70%;
-  position: relative;
-  z-index: 20;
 }
 
 .dpcConent {
