@@ -66,7 +66,7 @@ const APDashboard = () => {
             <Card className="APDcard">
               <Card.Body>
                 <div className="APDashCardHeading">
-                  <h4>Ruan Klopper</h4>
+                  <h4>YOUR_FULLNAME</h4>
                   <div className="APDCIcon">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -83,8 +83,8 @@ const APDashboard = () => {
                   </div>
                 </div>
                 <div className="APDashCardSplitter"></div>
-                <h6>ruank83@gmail.com</h6>
-                <h6>+27 66 207 2937</h6>
+                <h6>YOUR_EMAIL_ADDRESS</h6>
+                <h6>YOUR_CELLPHONE</h6>
                 <Button variant="dark">Profile</Button>
               </Card.Body>
             </Card>
@@ -186,21 +186,21 @@ const APPersonalInfo = () => {
           <Col xs={12} sm={12} md={6} lg={4}>
             <div className="ACPITgroup">
               <h6>First Name</h6>
-              <h6 style={{ fontWeight: "bold" }}>Ruan</h6>
+              <h6 style={{ fontWeight: "bold" }}>First</h6>
             </div>
             <div className="ACPITgroup">
               <h6>Last Name</h6>
-              <h6 style={{ fontWeight: "bold" }}>Klopper</h6>
+              <h6 style={{ fontWeight: "bold" }}>Name</h6>
             </div>
           </Col>
           <Col xs={12} sm={12} md={6} lg={4}>
             <div className="ACPITgroup">
               <h6>Email Address</h6>
-              <h6 style={{ fontWeight: "bold" }}>ruank83@gmail.com</h6>
+              <h6 style={{ fontWeight: "bold" }}>yourmail@gmail.com</h6>
             </div>
             <div className="ACPITgroup">
               <h6>Cellphone number</h6>
-              <h6 style={{ fontWeight: "bold" }}>+27 66 207 2937</h6>
+              <h6 style={{ fontWeight: "bold" }}>+27 12 123 4567</h6>
             </div>
           </Col>
         </Row>
@@ -210,25 +210,25 @@ const APPersonalInfo = () => {
           <Col xs={12} sm={12} md={6} lg={4}>
             <div className="ACPITgroup">
               <h6>Street Address</h6>
-              <h6 style={{ fontWeight: "bold" }}>1446 Cunningham Avenue</h6>
+              <h6 style={{ fontWeight: "bold" }}>StreetAddress</h6>
             </div>
             <div className="ACPITgroup">
               <h6>Suburb/Region</h6>
-              <h6 style={{ fontWeight: "bold" }}>Waverley</h6>
+              <h6 style={{ fontWeight: "bold" }}>Suburb</h6>
             </div>
             <div className="ACPITgroup">
               <h6>City</h6>
-              <h6 style={{ fontWeight: "bold" }}>Pretoria</h6>
+              <h6 style={{ fontWeight: "bold" }}>City</h6>
             </div>
           </Col>
           <Col xs={12} sm={12} md={6} lg={4}>
             <div className="ACPITgroup">
               <h6>Province/State</h6>
-              <h6 style={{ fontWeight: "bold" }}>Gauteng</h6>
+              <h6 style={{ fontWeight: "bold" }}>Province</h6>
             </div>
             <div className="ACPITgroup">
               <h6>Postal Code</h6>
-              <h6 style={{ fontWeight: "bold" }}>0125</h6>
+              <h6 style={{ fontWeight: "bold" }}>Postal code</h6>
             </div>
             <div className="ACPITgroup">
               <h6>Buiding type</h6>
@@ -388,14 +388,12 @@ const APOrders = () => {
               <Row>
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <h4 className="font-bold">Order Information</h4>
-                  <h5>Full name: Ruan Klopper</h5>
-                  <h5>Email: ruank83@gmail.com</h5>
-                  <h5>Phone: +27 66 207 2937</h5>
+                  <h5>Full name: YOUR_FULLNAME</h5>
+                  <h5>Email: YOUR_EMAIL</h5>
+                  <h5>Phone: YOUR_CELLPHONE_NUMBER</h5>
                   <br />
                   <h5 className="font-bold">Shipping Address</h5>
-                  <h5>
-                    1446 Cunningham Avenue Waverley Pretoria, Gauteng, 0135
-                  </h5>
+                  <h5>Your full street address</h5>
                   <br />
                   <h5 className="font-bold">Delivery Notes</h5>
                   <h5>Not set</h5>

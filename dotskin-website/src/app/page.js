@@ -66,8 +66,7 @@ export default function Home() {
 
             {/* Testimonials */}
             <Row>
-              <h1>Testimonials</h1>
-              <Row></Row>
+              <h1>WEBSITE STILL IN PRODUCTION...</h1>
             </Row>
           </Container>
         </div>

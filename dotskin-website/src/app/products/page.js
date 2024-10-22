@@ -139,85 +139,34 @@ const PCPSideNav = () => {
 
 export default function ProductsCatalog() {
   const [isSideNavActive, setIsSideNavActive] = useState(true);
+  const [products, setProducts] = useState([]); // State for products
+  const [loading, setLoading] = useState(true); // State for loading
+  const [error, setError] = useState(null); // State for error handling
 
   const toggleSideNav = () => {
     setIsSideNavActive(!isSideNavActive);
   };
 
-  const products = [
-    {
-      title: "Boost.Exfoliate",
-      price: "R690.00",
-      rating: "5.0 (20)",
-      image: "/sampleImages/image.png",
-    },
-    {
-      title: "Hydra.Nourish",
-      price: "R850.00",
-      rating: "4.8 (15)",
-      image: "/sampleImages/image-2.png",
-    },
-    {
-      title: "Radiance.Serum",
-      price: "R1,200.00",
-      rating: "4.9 (25)",
-      image: "/sampleImages/image-3.png",
-    },
-    {
-      title: "Boost.Exfoliate",
-      price: "R690.00",
-      rating: "5.0 (20)",
-      image: "/sampleImages/image.png",
-    },
-    {
-      title: "Hydra.Nourish",
-      price: "R850.00",
-      rating: "4.8 (15)",
-      image: "/sampleImages/image-2.png",
-    },
-    {
-      title: "Radiance.Serum",
-      price: "R1,200.00",
-      rating: "4.9 (25)",
-      image: "/sampleImages/image-3.png",
-    },
-    {
-      title: "Boost.Exfoliate",
-      price: "R690.00",
-      rating: "5.0 (20)",
-      image: "/sampleImages/image.png",
-    },
-    {
-      title: "Hydra.Nourish",
-      price: "R850.00",
-      rating: "4.8 (15)",
-      image: "/sampleImages/image-2.png",
-    },
-    {
-      title: "Radiance.Serum",
-      price: "R1,200.00",
-      rating: "4.9 (25)",
-      image: "/sampleImages/image-3.png",
-    },
-    {
-      title: "Boost.Exfoliate",
-      price: "R690.00",
-      rating: "5.0 (20)",
-      image: "/sampleImages/image.png",
-    },
-    {
-      title: "Hydra.Nourish",
-      price: "R850.00",
-      rating: "4.8 (15)",
-      image: "/sampleImages/image-2.png",
-    },
-    {
-      title: "Radiance.Serum",
-      price: "R1,200.00",
-      rating: "4.9 (25)",
-      image: "/sampleImages/image-3.png",
-    },
-  ];
+  useEffect(() => {
+    // Fetch products from the API
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error(`Error fetching products: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <div className="clientWebsiteContainer">
@@ -225,41 +174,29 @@ export default function ProductsCatalog() {
       <div className="clientWebsiteContent">
         <div className="PCLmainContainer">
           {/* SideNav */}
-          {/* <div
-            className={`PLCsideBar ${
-              isSideNavActive ? "PLCsideBarClosed" : ""
-            }`}
-          >
-            <PCPSideNav />
-            <button className="PCAsideNavCloseBtn" onClick={toggleSideNav}>
-              <div
-                className={`PCAsideNavCloseBtnIcon ${
-                  isSideNavActive
-                    ? "PCAsideNavCloseBtnIconOpen"
-                    : "PCAsideNavCloseBtnIconClose"
-                }`}
-              ></div>
-              {isSideNavActive ? "Search & Filtering" : "close"}
-            </button>
-          </div> */}
-
           <div className="flex justify-center">
             <div className="PCLsideNavHolder">
               <PCPSideNav />
             </div>
             <div className="PCLcontWrap">
-              <Row>
-                {products.map((product, index) => (
-                  <ProductCardWrapper
-                    key={index} // Added key prop here
-                    cardType={"desktop"}
-                    title={product.title}
-                    price={product.price}
-                    rating={product.rating}
-                    image={product.image}
-                  />
-                ))}
-              </Row>
+              {loading ? (
+                <div>Loading products...</div>
+              ) : error ? (
+                <div>Error: {error}</div>
+              ) : (
+                <Row>
+                  {products.map((product, index) => (
+                    <ProductCardWrapper
+                      key={index}
+                      cardType={"desktop"}
+                      title={product.name} // Adjusted property name
+                      price={`R${product.price}`} // Formatting price
+                      rating={product.rating}
+                      image={product.image}
+                    />
+                  ))}
+                </Row>
+              )}
             </div>
           </div>
         </div>
